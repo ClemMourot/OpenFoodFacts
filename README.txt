@@ -1,0 +1,23 @@
+	Use the data from Open Food Facts
+
+
+REQUIREMENTS
+
+- Python
+- MySQL
+- Internet connection
+
+
+USER GUIDE
+
+The user can choose between (1) finding a substitute for a food item or (2) accessing the already replaced food items.
+If he chooses (1):
+- he has to select one category
+- he has to select one food item
+- he can see the substitute for this food item
+- he can save the result
+If he chooses (2):
+- he can see the list of his saved items
+- he can choose one to see all the details
+- he can remove one from the list
+
