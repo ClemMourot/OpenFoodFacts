@@ -1,29 +1,59 @@
 import requests
 import json
+from classes import *
 import mysql.connector
-
-pages_nb = 10
-
-url = "http://fr.openfoodfacts.org/categorie/aliments-et-boissons-a-base-de-vegetaux.json"
-r = requests.get(url)
-result = json.loads(r.text)
-products_nb = result["count"]
-print(products_nb)
-
-for page in range(1, pages_nb):
-    url = "http://fr.openfoodfacts.org/categorie/aliments-et-boissons-a-base-de-vegetaux/{0}.json" .format(page)
-    print(url)
-    r = requests.get(url)
-    result = json.loads(r.text)
-    print(r.text)
-    product = result["products"]
-    print(product)
-    for i in product:
-        if "generic_name" in i:
-            print(i["generic_name"])
+from constants import *
 
 
-cnx = mysql.connector.connect(user='user', database='open_food_facts')
+def get_categories():
+
+    categories_list = []
+
+    for c_id, page in enumerate(categories_names_url):
+        url = "http://fr.openfoodfacts.org/categorie/{}.json" .format(page)
+        request = requests.get(url)
+        result = json.loads(request.text)
+        category = Category()
+        category.id = c_id
+        category.name = categories_names_code[c_id]
+        category.products_nb = result["count"]
+        categories_list.append(category)
+
+        get_products()
+
+
+def get_products():
+
+    products_list = []
+
+    for idx, page in enumerate(categories_names_url, 1):
+        url = "http://fr.openfoodfacts.org/categorie/{}/{}.json" .format(page, idx)
+        request = requests.get(url)
+        result = json.loads(request.text)
+        products = result["products"]
+        for p_id, item in enumerate(products):
+            if "generic_name_fr" in item:
+                product = Product()
+                product.name = p_id["generic_name_fr"]
+                product.id = p_id
+                products_list.append(product)
+
+
+"""cnx = mysql.connector.connect(user='user', database='open_food_facts')
 cursor = cnx.cursor()
 
+TABLES = {}
 
+TABLES['categories'] = (
+    "CREATE TABLE categories"
+)
+
+TABLES['products'] = (
+    "CREATE TABLE products"
+)
+
+"""
+
+get_categories()
+
+get_products()
