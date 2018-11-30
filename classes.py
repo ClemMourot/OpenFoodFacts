@@ -3,7 +3,7 @@ class Product:
     def __init__(self):
         self.name = ""
         self.id = 0
-        self.category_id = []
+        self.category_id = 0
 
 
 class Category:

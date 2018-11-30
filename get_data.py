@@ -5,9 +5,7 @@ import mysql.connector
 from constants import *
 
 
-def get_categories():
-
-    categories_list = []
+def get_categories(categories_list):
 
     for c_id, page in enumerate(categories_names_url):
         url = "http://fr.openfoodfacts.org/categorie/{}.json" .format(page)
@@ -19,12 +17,8 @@ def get_categories():
         category.products_nb = result["count"]
         categories_list.append(category)
 
-        get_products()
 
-
-def get_products():
-
-    products_list = []
+def get_products(products_list):
 
     for idx, page in enumerate(categories_names_url, 1):
         url = "http://fr.openfoodfacts.org/categorie/{}/{}.json" .format(page, idx)
@@ -32,28 +26,58 @@ def get_products():
         result = json.loads(request.text)
         products = result["products"]
         for p_id, item in enumerate(products):
-            if "generic_name_fr" in item:
+            if "generic_name" in item:
                 product = Product()
-                product.name = p_id["generic_name_fr"]
+                product.name = item["generic_name"]
                 product.id = p_id
+                product.category_id = idx
                 products_list.append(product)
 
 
-"""cnx = mysql.connector.connect(user='user', database='open_food_facts')
-cursor = cnx.cursor()
+def add_categories(categories_list, cursor):
 
-TABLES = {}
+    for c_id, category in enumerate(categories_list):
 
-TABLES['categories'] = (
-    "CREATE TABLE categories"
-)
+        add_category = ("INSERT INTO categories "
+                      "(name, products_number) "
+                      "VALUES (%s, %s)")
 
-TABLES['products'] = (
-    "CREATE TABLE products"
-)
+        category_data = (categories_list[c_id].name, categories_list[c_id].products_nb)
 
-"""
+        cursor.execute(add_category, category_data)
 
-get_categories()
 
-get_products()
+def add_products(products_list, cursor):
+
+    for p_id, product in enumerate(products_list):
+
+        add_product = ("INSERT INTO products "
+                    "(name, category_id) "
+                    "VALUES (%s, %s)")
+
+        product_data = (products_list[p_id].name, products_list[p_id].category_id)
+
+        cursor.execute(add_product, product_data)
+
+
+def insert_into_database():
+
+    categories_list = []
+    products_list = []
+
+    get_categories(categories_list)
+    get_products(products_list)
+
+    cnx = mysql.connector.connect(user='user', database='open_food_facts')
+    cursor = cnx.cursor()
+
+    add_categories(categories_list, cursor)
+    add_products(products_list, cursor)
+
+    cnx.commit()
+
+    cursor.close()
+    cnx.close()
+
+
+insert_into_database()
