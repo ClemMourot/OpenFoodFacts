@@ -1,4 +1,4 @@
-products_per_page = 20
+pages_nb_limit = 5
 categories_nb = 10
 
 categories_welcome_page = "https://fr.openfoodfacts.org/categorie/{}"
