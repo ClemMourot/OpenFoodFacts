@@ -4,6 +4,10 @@ class Product:
         self.name = ""
         self.id = 0
         self.category_id = 0
+        self.saved = 0
+        self.score = 0
+        self.url = ""
+        self.description = ""
 
 
 class Category:

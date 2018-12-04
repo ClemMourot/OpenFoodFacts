@@ -1,62 +1,18 @@
-from constants import *
 from classes import *
 import get_data
-
-
-def replace_product(products_list):
-
-    print("Trouver un substitut")
-    print("\n")
-    print("Sélectionnez la catégorie :")
-    print("\n")
-
-    for idx, category in enumerate(categories_names_url, 1):
-        print(idx, "-", category)
-
-    print("\n")
-
-    choice = int(input())
-
-    print("\n")
-
-    print("Sélectionnez l'aliment")
-
-    for idx, product in enumerate(products_list, 1):
-        if product.category_id == choice:
-            print(idx, "-", product.name)
-
-    print("\n")
-
-    choice = int(input())
-
-    print("\n")
-
-    print(products_list[choice].name)
-
-
-def get_substitutes(substitutes_list):
-
-    print("Mes aliments substitués")
-    for idx, substitute in enumerate(substitutes_list, 1):
-        print(idx, "-", substitutes_list[idx].name)
-
-    print("\n")
-
-    choice = int(input())
-
-    print("\n")
-
-    print(substitutes_list[choice].name)
+import database_access
+import mysql.connector
 
 
 def menu():
 
+    print("\n")
     print("1 - Remplacer un aliment")
     print("2 - Retrouver mes aliments substitués")
     print("3 - Quitter")
     print("\n")
 
-    choice = input()
+    choice = int(input())
 
     return choice
 
@@ -64,23 +20,34 @@ def menu():
 def program():
 
     database = Database()
-    get_data.insert_into_database(database)
+    connection = mysql.connector.connect(user='user', database='open_food_facts')
+    cursor = connection.cursor()
+    #get_data.insert_into_database(database, connection, cursor)
 
     on = True
     while on:
 
-        choice = menu()
+        try:
+            choice = menu()
+            if choice < 0 or choice > 3:
+                pass
 
-        if choice == '1':
+        except ValueError:
+            continue
+
+        if choice == 1:
             print("\n")
-            replace_product(database.products)
+            database_access.replace_product(connection, cursor)
 
-        if choice == '2':
+        if choice == 2:
             print("\n")
-            get_substitutes(database.substitutes)
+            database_access.substitutes_display(connection, cursor)
 
-        if choice == '3':
+        if choice == 3:
             on = False
+
+    cursor.close()
+    connection.close()
 
 
 program()

@@ -1,7 +1,6 @@
 import requests
 import json
 from classes import *
-import mysql.connector
 from constants import *
 
 
@@ -29,15 +28,17 @@ def get_products(database):
             result = json.loads(request.text)
             products = result["products"]
             for p_id, item in enumerate(products):
-                if "generic_name_fr" in item and item["generic_name_fr"] != "":
+                if "generic_name_fr" in item and item["generic_name_fr"] != "" and "nutrition_grades_tags" in item:
                     product = Product()
                     product.name = item["generic_name_fr"]
                     product.id = p_id
                     product.category_id = idx
+                    product.url = item["url"]
+                    product.score = item["nutrition_grades_tags"]
                     database.products.append(product)
 
 
-def add_categories(database, cursor):
+def add_categories(database, connection, cursor):
 
     for c_id, category in enumerate(database.categories):
 
@@ -48,33 +49,29 @@ def add_categories(database, cursor):
         category_data = (database.categories[c_id].name, database.categories[c_id].products_nb)
 
         cursor.execute(add_category, category_data)
+        connection.commit()
 
 
-def add_products(database, cursor):
+def add_products(database, connection, cursor):
 
     for p_id, product in enumerate(database.products):
 
         add_product = ("INSERT INTO products "
-                    "(name, category_id) "
-                    "VALUES (%s, %s)")
+                    "(name, category_id, url, score) "
+                    "VALUES (%s, %s, %s, %s)")
 
-        product_data = (database.products[p_id].name, database.products[p_id].category_id)
+        product_data = (database.products[p_id].name, database.products[p_id].category_id,
+                        database.products[p_id].url, database.products[p_id].score)
 
         cursor.execute(add_product, product_data)
+        connection.commit()
 
 
-def insert_into_database(database):
+def insert_into_database(database, connection, cursor):
 
     get_categories(database)
     get_products(database)
 
-    """cnx = mysql.connector.connect(user='user', database='open_food_facts')
-    cursor = cnx.cursor()
+    add_categories(database, connection, cursor)
+    add_products(database, connection, cursor)
 
-    add_categories(database, cursor)
-    add_products(database, cursor)
-
-    cnx.commit()
-
-    cursor.close()
-    cnx.close()"""
