@@ -7,6 +7,8 @@ import mysql.connector
 def menu():
 
     print("\n")
+    print("    MENU    ")
+    print("\n")
     print("1 - Remplacer un aliment")
     print("2 - Retrouver mes aliments substitués")
     print("3 - Quitter")
@@ -37,11 +39,11 @@ def program():
 
         if choice == 1:
             print("\n")
-            database_access.replace_product(connection, cursor)
+            database_access.replace_product(cursor, connection)
 
         if choice == 2:
             print("\n")
-            database_access.substitutes_display(connection, cursor)
+            database_access.substitutes_display(cursor, connection)
 
         if choice == 3:
             on = False

@@ -8,3 +8,5 @@ categories_names_url = ["pains", "vins", "legumes-prepares",
                     "chewing-gum", "desserts-vegetaliens", "nourriture-pour-animaux"]
 categories_names_code = ["bread", "wine", "prepared_vegetables", "vegetal_ready_meals", "dried_pasta", "ketchup",
                          "meat_substitutes", "chewing_gum", "vegan_desserts", "pet_food"]
+
+scores = ['a', 'b', 'c', 'd', 'e']

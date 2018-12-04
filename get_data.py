@@ -28,13 +28,14 @@ def get_products(database):
             result = json.loads(request.text)
             products = result["products"]
             for p_id, item in enumerate(products):
-                if "generic_name_fr" in item and item["generic_name_fr"] != "" and "nutrition_grades_tags" in item:
+                if "generic_name_fr" in item and item["generic_name_fr"] != "" and "nutrition_grades" in item:
                     product = Product()
                     product.name = item["generic_name_fr"]
                     product.id = p_id
                     product.category_id = idx
                     product.url = item["url"]
-                    product.score = item["nutrition_grades_tags"]
+                    score = item["nutrition_grades"]
+                    product.score = scores.index(score) + 1
                     database.products.append(product)
 
 
@@ -60,8 +61,8 @@ def add_products(database, connection, cursor):
                     "(name, category_id, url, score) "
                     "VALUES (%s, %s, %s, %s)")
 
-        product_data = (database.products[p_id].name, database.products[p_id].category_id,
-                        database.products[p_id].url, database.products[p_id].score)
+        product_data = (database.products[p_id].name, str(database.products[p_id].category_id),
+                        database.products[p_id].url, str(database.products[p_id].score))
 
         cursor.execute(add_product, product_data)
         connection.commit()
