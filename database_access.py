@@ -22,8 +22,8 @@ def categories_display(cursor):
 
         try:
             choice = int(input())
-            if choice < 0 or choice > categories_nb:
-                pass
+            if choice <= 0 or choice > categories_nb:
+                print("Choix invalide")
             else:
                 return choice
                 user_input = True
@@ -31,7 +31,7 @@ def categories_display(cursor):
             continue
 
 
-def products_display(cursor, choice):
+def products_display(cursor, category_choice):
 
     user_input = False
 
@@ -40,18 +40,18 @@ def products_display(cursor, choice):
         print("\n")
         print("Sélectionnez l'aliment")
 
-        get_products = ("SELECT name, p_id FROM products WHERE category_id = %d ") % choice
+        get_products = ("SELECT name, id FROM products WHERE category_id = %d ") % category_choice
         cursor.execute(get_products)
 
-        for idx, (name, p_id) in enumerate(cursor, 1):
-            print(p_id, "-", name)
+        for idx, (name, id) in enumerate(cursor, 1):
+            print(id, "-", name)
 
         print("\n")
 
         try:
             choice = int(input())
-            if choice < 0 or choice > p_id:
-                pass
+            if choice <= 0 or choice > id:
+                print("Choix invalide")
             else:
                 return choice
                 user_input = True
@@ -59,7 +59,41 @@ def products_display(cursor, choice):
             continue
 
 
-def item_display(cursor, connection, choice):
+def get_substitute(cursor, connection, score, category_id, product_choice):
+
+    print("\n")
+    print("Voici un substitut pour cet aliment :")
+
+    substitute_request = ("SELECT name, url, score, id, saved FROM products "
+                      "WHERE score < %d AND id != %d AND category_id = %d LIMIT 1") % (
+                     score, product_choice, category_id)
+    cursor.execute(substitute_request)
+
+    for name, url, score, id, saved in cursor:
+        print(name, url, score, id)
+
+        if saved == 1:
+            print("Vous avez déjà enregistré ce substitut")
+            print("Appuyez sur 'E' pour retourner au menu")
+            key = input()
+            if key == 'E':
+                return False
+
+        elif saved != 1:
+            print("\n")
+            print("Appuyez sur 'S' pour sauvegarder cet aliment")
+
+            key = input()
+            if key == 'S':
+                print("a")
+                save_substitute = ("UPDATE products SET saved = '1' WHERE id = %d") % id
+                cursor.execute(save_substitute)
+                connection.commit()
+            if key == 'E':
+                return False
+
+
+def item_display(cursor, connection, product_choice):
 
     on = True
     while on:
@@ -67,37 +101,19 @@ def item_display(cursor, connection, choice):
         print("\n")
         print("Voici les détails de l'aliment choisi :")
 
-        get_item = ("SELECT name, url, score, category_id FROM products WHERE p_id = %d") % choice
+        get_item = ("SELECT name, url, score, category_id FROM products WHERE id = %d") % product_choice
         cursor.execute(get_item)
 
-        for idx, (name, url, p_score, category_id) in enumerate(cursor, 1):
-            print(name, url, p_score, category_id)
-
-        print("\n")
-        print("Voici un substitut pour cet aliment :")
-
-        get_substitute = ("SELECT name, url, score, p_id FROM products "
-                          "WHERE score < %d AND p_id != %d AND category_id = %d LIMIT 1") % (p_score, choice, category_id)
-        cursor.execute(get_substitute)
-
-        for idx, (name, url, p_score, p_id) in enumerate(cursor, 1):
-            print(name, url, p_score, p_id)
-
-        print("\n")
-        print("Appuyez sur 'S' pour sauvegarder cet aliment")
-
-        wait = True
-        while wait:
-            key = input()
-            if key == 'S':
-                print("a")
-                save_substitute = ("UPDATE products SET saved = '1' WHERE p_id = %d") % p_id
-                cursor.execute(save_substitute)
-                connection.commit()
+        for idx, (name, url, score, category_id) in enumerate(cursor, 1):
+            print(name, url, score, category_id)
+            if score != 1:
+                on = get_substitute(cursor, connection, score, category_id, product_choice)
+            else:
+                print("Ce produit n'a pas de substitut")
                 print("Appuyez sur 'E' pour retourner au menu")
-            if key == 'E':
-                wait = False
-                on = False
+                key = input()
+                if key == 'E':
+                    on = False
 
 
 def replace_product(cursor, connection):
@@ -113,6 +129,24 @@ def replace_product(cursor, connection):
         on = False
 
 
+def substitute_details(choice, cursor, connection):
+
+    print("Voici les détails de l'aliment choisi")
+    get_selection = ("SELECT name, url, score FROM products WHERE id = %d") % choice
+    cursor.execute(get_selection)
+
+    for name, url, score in cursor:
+        print(name, url, score)
+        print("Appuyez sur 'S' si vous voulez retirer ce produit de vos aliments substitués sur 'E' pour retourner au menu")
+        key = input()
+        if key == 'S':
+            unsave_substitute = ("UPDATE products SET saved = '0' WHERE id = %d") % choice
+            cursor.execute(unsave_substitute)
+            connection.commit()
+        if key == 'E':
+            return False
+
+
 def substitutes_display(cursor, connection):
 
     on = True
@@ -121,22 +155,37 @@ def substitutes_display(cursor, connection):
 
         print("Mes aliments substitués")
 
-        get_substitutes = ("SELECT name FROM products WHERE saved = '1'")
+        get_substitutes = ("SELECT name, id FROM products WHERE saved = '1'")
         cursor.execute(get_substitutes)
 
-        for idx, name in enumerate(cursor, 1):
-            print(idx, "-", name)
+        idx = 1
 
-        print("\n")
+        for idx, (name, id) in enumerate(cursor):
+            print(id, "-", name)
 
-        try:
-            choice = int(input())
-            if choice < 0 or choice > idx:
-                pass
+        if idx == 1:
+            print("Vous n'avez enregistré aucun substitut")
+            print("Appuyez sur 'E' pour retourner au menu")
+            key = input()
+            if key == 'E':
+                on = False
 
-        except ValueError:
-            continue
+        else:
 
-        print("\n")
+                print("\n")
 
-        connection.commit()
+                print("Sélectionnez un substitut")
+
+                try:
+                    choice = int(input())
+                    if choice <= 0 or choice > id:
+                        print("Choix invalide")
+                    else:
+                        on = substitute_details(choice, cursor, connection)
+
+                except ValueError:
+                    continue
+
+                print("\n")
+
+                connection.commit()

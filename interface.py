@@ -31,7 +31,7 @@ def program():
 
         try:
             choice = menu()
-            if choice < 0 or choice > 3:
+            if choice <= 0 or choice > 3:
                 pass
 
         except ValueError:
