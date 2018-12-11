@@ -33,6 +33,7 @@ class Database:
 
         for c_id, page in enumerate(categories_names_url):
             url = categories_welcome_page.format(page)
+            print(url)
             request = requests.get(url)
             result = json.loads(request.text)
             category = Category()

@@ -2,6 +2,7 @@ from classes import *
 import get_data
 import database_access
 import mysql.connector
+import sqlalchemy
 
 
 def menu():
@@ -24,7 +25,7 @@ def program():
     database = Database()
     connection = mysql.connector.connect(user='user', database='open_food_facts')
     cursor = connection.cursor()
-    #get_data.insert_into_database(database, connection, cursor)
+    # get_data.insert_into_database(database, connection, cursor)
 
     on = True
     while on:
@@ -53,3 +54,26 @@ def program():
 
 
 program()
+
+
+"""import pymysql
+pymysql.install_as_MySQLdb()
+from sqlalchemy.ext.declarative import declarative_base
+
+
+def orm():
+    engine = sqlalchemy.create_engine("mysql://user@localhost/open_food_facts",
+                                      encoding='utf-8', echo=True)
+    Base = declarative_base()
+
+    class Cat(Base):
+
+        __tablename__ = 'categories'
+
+        id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
+
+    cat = Cat(id='1')
+    print(cat.id)
+
+
+orm()"""

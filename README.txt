@@ -24,12 +24,15 @@ If he chooses (2):
 
 SOURCES
 
-OpenClassrooms
-https://dev.mysql.com/doc/connector-python/en/connector-python-example-ddl.html
-http://docs.python-requests.org/en/master/user/quickstart/#passing-parameters-in-urls
+https://openclassrooms.com/fr/
+https://dev.mysql.com/doc/connector-python/en
+http://docs.python-requests.org
 http://dridk.me/python-requests.html
 https://en.wiki.openfoodfacts.org/API
 https://stackoverflow.com
+https://zestedesavoir.com
+https://pynative.com/
+https://www.wikipedia.org
 
 SCRIPT MYSQL
 
@@ -38,9 +41,4 @@ USE open_food_facts;
 CREATE USER 'user'@'localhost';
 GRANT ALL PRIVILEGES ON open_food_facts.* TO 'user'@'localhost';
 exit;
-
-mysql -u user
-USE open_food_facts
-
-
 
