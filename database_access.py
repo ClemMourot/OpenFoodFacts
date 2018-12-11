@@ -65,13 +65,15 @@ def get_substitute(cursor, connection, score, category_id, product_choice):
     print("\n")
     print("Voici un substitut pour cet aliment :")
 
-    substitute_request = ("SELECT name, url, score, id, saved FROM products "
+    substitute_request = ("SELECT name, url, score, saved, category_id, id FROM products "
                           "WHERE score < %d AND id != %d AND category_id = %d ORDER BY RAND() LIMIT 1") % (
                      score, product_choice, category_id)
     cursor.execute(substitute_request)
 
-    for name, url, score, id, saved in cursor:
-        print(name, url, score, id)
+    for name, url, score, saved, category_id, id in cursor:
+
+        print("Nom du produit : ", name, "\n", "Lien vers la page produit : ", url, "\n", "Nutriscore : ",
+              scores[int(score)-1], "\n", "Catégorie : ", categories_names_code[int(category_id)-1])
 
         if saved == 1:
             print("Vous avez déjà enregistré ce substitut")
@@ -82,7 +84,7 @@ def get_substitute(cursor, connection, score, category_id, product_choice):
 
         elif saved != 1:
             print("\n")
-            print("Appuyez sur 'S' pour sauvegarder cet aliment")
+            print("Appuyez sur 'S' pour sauvegarder cet aliment ou sur 'E' pour retourner au menu")
 
             key = input()
             if key == 'S':
@@ -108,8 +110,8 @@ def item_display(cursor, connection, product_choice):
         cursor.execute(get_item)
 
         for idx, (name, url, score, category_id) in enumerate(cursor, 1):
-            letter_score = scores[score-1]
-            print("Nom du produit : ", name, "\n", "Lien vers la page produit : ", url, "\n", "Nutriscore : ", letter_score)
+
+            print("Nom du produit : ", name, "\n", "Lien vers la page produit : ", url, "\n", "Nutriscore : ", scores[score-1])
             if score != 1:
                 on = get_substitute(cursor, connection, score, category_id, product_choice)
             else:
@@ -167,12 +169,12 @@ def substitutes_display(cursor, connection):
                            "WHERE saved = '1'")
         cursor.execute(get_substitutes)
 
-        idx = 1
+        idx = 0
 
-        for idx, (name, id) in enumerate(cursor):
+        for idx, (name, id) in enumerate(cursor, 1):
             print(id, "-", name)
 
-        if idx is None:
+        if idx == 0:
             print("Vous n'avez enregistré aucun substitut")
             print("Appuyez sur 'E' pour retourner au menu")
             key = input()
