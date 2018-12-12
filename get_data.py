@@ -1,9 +1,11 @@
 def add_tables(connection, cursor):
+    """sends sql requests to create the categories and products tables with all their columns"""
 
     drop_tables = ("DROP TABLE IF EXISTS products;"
                    "DROP TABLE IF EXISTS categories;")
+    # makes sure the tables don't already exist
 
-    cursor.execute(drop_tables, multi=True)
+    cursor.execute(drop_tables, multi=True)  # two requests in one execute
     connection.commit()
 
     add_categories_t = ("CREATE TABLE categories ("
@@ -32,8 +34,10 @@ def add_tables(connection, cursor):
 
 
 def add_categories(database, connection, cursor):
+    """inserts categories data into database"""
 
     for c_id, category in enumerate(database.categories):
+        #  browses the list to gather all the data stored in the objects
 
         add_category = ("INSERT INTO categories "
                         "(name, products_number) "
@@ -46,8 +50,10 @@ def add_categories(database, connection, cursor):
 
 
 def add_products(database, connection, cursor):
+    """inserts products data into database"""
 
     for p_id, product in enumerate(database.products):
+        #  browses the list to gather all the data stored in the objects
 
         add_product = ("INSERT INTO products "
                        "(name, category_id, url, score) "
@@ -61,11 +67,12 @@ def add_products(database, connection, cursor):
 
 
 def insert_into_database(database, connection, cursor):
+    """calls every function needed to insert the data into the database"""
 
-    database.get_categories()
+    database.get_categories()  # from the API
     database.get_products()
 
     add_tables(connection, cursor)
 
-    add_categories(database, connection, cursor)
+    add_categories(database, connection, cursor)  # into the MySQL database
     add_products(database, connection, cursor)

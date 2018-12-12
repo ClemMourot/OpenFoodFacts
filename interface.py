@@ -1,11 +1,12 @@
-from classes import *
+import mysql.connector
+
 import get_data
 import database_access
-import mysql.connector
-import sqlalchemy
+from classes import *
 
 
 def menu():
+    """displays the menu and returns the user's choice"""
 
     print("\n")
     print("    MENU    ")
@@ -21,32 +22,44 @@ def menu():
 
 
 def program():
+    """initializes Database object and MySQL connection and runs the function needed based on the user's menu choice"""
 
-    database = Database()
-    connection = mysql.connector.connect(user='user', database='open_food_facts')
+    database = Database()  # instantiates Database object
+
+    connection = mysql.connector.connect(user='user', database='open_food_facts')  # connects to MySQL
     cursor = connection.cursor()
-    # get_data.insert_into_database(database, connection, cursor)
+
+    get_data.insert_into_database(database, connection, cursor)  # gathers and inserts data into MySQL database
 
     on = True
-    while on:
+
+    while on:  # until the user chooses to exit the program
 
         try:
+
             choice = menu()
+
             if choice <= 0 or choice > 3:
+
                 pass
 
         except ValueError:
+
             continue
 
         if choice == 1:
+
             print("\n")
-            database_access.replace_product(cursor, connection)
+            database_access.replace_product(cursor, connection)  # user chose to replace an item
 
         if choice == 2:
+
             print("\n")
             database_access.substitutes_display(cursor, connection)
+            # user chose to access his already saved substitutes
 
-        if choice == 3:
+        if choice == 3:  # user chose to quit the program
+
             on = False
 
     cursor.close()
@@ -54,26 +67,3 @@ def program():
 
 
 program()
-
-
-"""import pymysql
-pymysql.install_as_MySQLdb()
-from sqlalchemy.ext.declarative import declarative_base
-
-
-def orm():
-    engine = sqlalchemy.create_engine("mysql://user@localhost/open_food_facts",
-                                      encoding='utf-8', echo=True)
-    Base = declarative_base()
-
-    class Cat(Base):
-
-        __tablename__ = 'categories'
-
-        id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
-
-    cat = Cat(id='1')
-    print(cat.id)
-
-
-orm()"""
