@@ -1,8 +1,6 @@
-import mysql.connector
-
 import get_data
 import database_access
-from classes import *
+from database_class import *
 
 
 def menu():
@@ -22,14 +20,14 @@ def menu():
 
 
 def program():
-    """initializes Database object and MySQL connection and runs the function needed based on the user's menu choice"""
+    """initializes Database object and MySQL connection
+    and runs the function needed based on the user's menu choice"""
 
     database = Database()  # instantiates Database object
 
-    connection = mysql.connector.connect(user='user', database='open_food_facts')  # connects to MySQL
-    cursor = connection.cursor()
-
-    get_data.insert_into_database(database, connection, cursor)  # gathers and inserts data into MySQL database
+    get_data.insert_into_database(database, database.connection,
+                                  database.cursor)
+    # gathers and inserts data into MySQL database
 
     on = True
 
@@ -50,20 +48,22 @@ def program():
         if choice == 1:
 
             print("\n")
-            database_access.replace_product(cursor, connection)  # user chose to replace an item
+            database_access.replace_product(database.cursor,
+                                            database.connection)
+            # user chose to replace an item
 
         if choice == 2:
 
             print("\n")
-            database_access.substitutes_display(cursor, connection)
+            database_access.substitutes_display(database.cursor,
+                                                database.connection)
             # user chose to access his already saved substitutes
 
         if choice == 3:  # user chose to quit the program
 
             on = False
 
-    cursor.close()
-    connection.close()
+    database.connection.close()
 
 
 program()

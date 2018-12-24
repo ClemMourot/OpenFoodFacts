@@ -1,19 +1,16 @@
 """Declaration of constants needed throughout the program"""
 
-categories_nb = 10
+CATEGORIES_NB = 10
 
-limit_pages_nb = 10
+LIMIT_PAGES_NB = 15
 
-categories_welcome_page = "https://fr.openfoodfacts.org/categorie/{}.json"
+CATEGORIES_WELCOME_PAGE = "https://fr.openfoodfacts.org/categorie/{}.json"
 
-products_page = "http://fr.openfoodfacts.org/categorie/{}/{}.json"
+PRODUCTS_PAGE = "http://fr.openfoodfacts.org/categorie/{}/{}.json"
 
-categories_names_url = ["pains", "aliments-a-base-de-plantes-sechees", "legumes-prepares",
-                        "plats-prepares-d-origine-vegetale", "pates-seches", "ketchup", "substituts-de-viande",
+CATEGORIES_NAMES_URL = ["pains", "aliments-a-base-de-plantes-sechees",
+                        "legumes-prepares", "plats-prepares-d-origine-vegetale",
+                        "pates-seches", "ketchup", "substituts-de-viande",
                         "chewing-gum", "desserts-vegetaliens", "chips"]
 
-categories_names_code = ["bread", "dried_plants_food", "prepared_vegetables", "vegetal_ready_meals", "dried_pasta",
-                         "ketchup",
-                         "meat_substitutes", "chewing_gum", "vegan_desserts", "chips"]
-
-scores = ['a', 'b', 'c', 'd', 'e']
+SCORES = ['a', 'b', 'c', 'd', 'e']
