@@ -6,8 +6,7 @@ def add_tables(connection, cursor):
     with all their columns"""
 
     drop_tables_p = "DROP TABLE IF EXISTS products "
-    drop_tables_c = "DROP TABLE IF EXISTS " \
-                    "categories "
+    drop_tables_c = "DROP TABLE IF EXISTS categories "
     # makes sure the tables don't already exist
 
     cursor.execute(drop_tables_p)

@@ -57,8 +57,11 @@ def products_display(cursor, category_choice):
         # sql request to get the products names and ids from the chosen category
         cursor.execute(get_products)
 
+        idx = 0
+
         for idx, (name, p_id) in enumerate(cursor, 1):
             print(p_id, "-", name)
+            idx = p_id
 
         print("\n")
 
@@ -66,7 +69,7 @@ def products_display(cursor, category_choice):
 
             choice = int(input())
 
-            if choice <= 0 or choice > p_id:  # if user's choice is not valid
+            if choice <= 0 or choice > idx:  # if user's choice is not valid
 
                 print("Choix invalide")
 
