@@ -5,8 +5,9 @@ def add_tables(connection, cursor):
     """sends sql requests to create the categories and products tables
     with all their columns"""
 
-    drop_tables_p = "DROP TABLE products"
-    drop_tables_c = "DROP TABLE categories"
+    drop_tables_p = "DROP TABLE IF EXISTS products "
+    drop_tables_c = "DROP TABLE IF EXISTS " \
+                    "categories "
     # makes sure the tables don't already exist
 
     cursor.execute(drop_tables_p)
@@ -80,12 +81,12 @@ def add_products(database, connection, cursor):
 def insert_into_database(database, connection, cursor):
     """calls every function needed to insert the data into the database"""
 
-    check_tables = ("SELECT COUNT(*) "
-                   "FROM information_schema.tables ")
+    check_tables = ("SHOW TABLES "
+                    "LIKE 'products'")
 
     database.cursor.execute(check_tables)
 
-    if cursor.fetchone()[0] == 1:
+    if not cursor.fetchone():  # if no result from the Xcursor
         print("Chargement des donnnées ...")
         database.get_categories()  # from the API
         database.get_products()
