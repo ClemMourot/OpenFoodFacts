@@ -1,3 +1,7 @@
+"""contains every function needed to get the data
+from the database according to the user's choices"""
+
+
 from constants import *
 
 
@@ -87,9 +91,9 @@ def item_display(cursor, connection, product_choice):
     """displays the chosen product's details
     and call the get_substitute function if one can be found"""
 
-    on = True
+    loop_on = True
 
-    while on:  # until the user chooses to return to the menu
+    while loop_on:  # until the user chooses to return to the menu
 
         print("\n")
         print("Voici les détails de l'aliment choisi :")
@@ -99,7 +103,7 @@ def item_display(cursor, connection, product_choice):
         # sql request to get the details on the chosen product
         cursor.execute(get_item)
 
-        for idx, (name, url, score, category_id) in enumerate(cursor, 1):
+        for name, url, score, category_id in cursor:
 
             print("Nom du produit : ", name, "\n",
                   "Lien vers la page produit : ", url, "\n", "Nutriscore : ",
@@ -109,8 +113,8 @@ def item_display(cursor, connection, product_choice):
                 # a substitute can be found only
                 # if the product's nutrition score isn't already the lowest
 
-                on = get_substitute(cursor, connection, score, category_id,
-                                    product_choice)
+                loop_on = get_substitute(cursor, connection, score, category_id,
+                                         product_choice)
                 # gets False when user wants to return to menu
 
             else:
@@ -121,7 +125,7 @@ def item_display(cursor, connection, product_choice):
                 key = input()
 
                 if key == 'E':
-                    on = False
+                    loop_on = False
 
 
 def substitute_details(choice, cursor, connection):
@@ -147,7 +151,7 @@ def substitute_details(choice, cursor, connection):
         key = input()
 
         if key == 'S':
-            delete_substitute = ("UPDATE products SET saved = '0'"  
+            delete_substitute = ("UPDATE products SET saved = '0'"
                                  "WHERE p_id = %d ") % choice
             # sql request to set back the saved column to '0'
             cursor.execute(delete_substitute)
@@ -162,9 +166,9 @@ def substitutes_display(cursor, connection):
     the substitute_details function
     if the user chooses one to get more info on it"""
 
-    on = True
+    loop_on = True
 
-    while on:  # until the user chooses to return to the menu
+    while loop_on:  # until the user chooses to return to the menu
 
         print("Mes aliments substitués")
 
@@ -188,7 +192,7 @@ def substitutes_display(cursor, connection):
             key = input()
 
             if key == 'E':
-                on = False
+                loop_on = False
 
         else:  # if there are saved substitutes
 
@@ -207,7 +211,7 @@ def substitutes_display(cursor, connection):
 
                 else:
 
-                    on = substitute_details(choice, cursor, connection)
+                    loop_on = substitute_details(choice, cursor, connection)
                     # displays the substitute's details
                     # and returns False when user chooses to return to menu
 
@@ -231,7 +235,7 @@ def get_substitute(cursor, connection, score, category_id, product_choice):
                           "WHERE score < %d AND p_id != %d"
                           " AND category_id = %d "
                           "ORDER BY RAND() LIMIT 1") % (
-                             score, product_choice, category_id)
+                              score, product_choice, category_id)
     #  sql request to select a random product from the same category
     #  and that has a lower nutrition score
     cursor.execute(substitute_request)
@@ -284,11 +288,12 @@ def replace_product(cursor, connection):
     """calls every function needed to get a substitute
     for a chosen product in a chosen category"""
 
-    on = True
+    loop_on = True
 
-    while on:
+    while loop_on:
+
         choice = categories_display(cursor)
         choice = products_display(cursor, choice)
         item_display(cursor, connection, choice)
 
-        on = False
+        loop_on = False

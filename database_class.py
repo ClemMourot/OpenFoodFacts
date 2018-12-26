@@ -1,5 +1,7 @@
-import requests
+""" initializes database class"""
+
 import json
+import requests
 import mysql.connector
 
 from category_class import *
@@ -32,7 +34,7 @@ class Database:
             result = json.loads(request.text)
             # turns json result into a dictionary
             category = Category()
-            category.id = c_id
+            category.c_id = c_id
             category.name = CATEGORIES_NAMES_URL[c_id]
             category.products_nb = result["count"]
             self.categories.append(category)
@@ -63,7 +65,7 @@ class Database:
 
                         product = Product()
                         product.name = item["generic_name_fr"]
-                        product.id = p_id
+                        product.p_id = p_id
                         product.category_id = idx
                         product.url = item["url"]
                         score = item["nutrition_grades"]

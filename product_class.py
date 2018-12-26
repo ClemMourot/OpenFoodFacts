@@ -1,3 +1,6 @@
+"""initializes product class"""
+
+
 class Product:
     """defines every attributes needed regarding a product"""
 
@@ -5,7 +8,7 @@ class Product:
         """sets default values for the attributes"""
 
         self.name = ""
-        self.id = 0
+        self.p_id = 0
         self.category_id = 0
         self.saved = 0
         self.score = 0

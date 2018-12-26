@@ -1,4 +1,4 @@
-import os
+""" gets the data from the API and inserts it into the database if needed"""
 
 
 def add_tables(connection, cursor):
@@ -12,8 +12,6 @@ def add_tables(connection, cursor):
     cursor.execute(drop_tables_p)
     cursor.execute(drop_tables_c)
     connection.commit()
-
-    os.system("pause")
 
     add_categories_t = ("CREATE TABLE categories ("
                         "id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,"
@@ -44,7 +42,7 @@ def add_tables(connection, cursor):
 def add_categories(database, connection, cursor):
     """inserts categories data into database"""
 
-    for c_id, category in enumerate(database.categories):
+    for c_id in enumerate(database.categories):
         #  browses the list to gather all the data stored in the objects
 
         add_category = ("INSERT INTO categories "
@@ -61,7 +59,7 @@ def add_categories(database, connection, cursor):
 def add_products(database, connection, cursor):
     """inserts products data into database"""
 
-    for p_id, product in enumerate(database.products):
+    for p_id in enumerate(database.products):
         #  browses the list to gather all the data stored in the objects
 
         add_product = ("INSERT INTO products "

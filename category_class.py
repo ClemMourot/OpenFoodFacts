@@ -1,3 +1,6 @@
+"""initializes category class"""
+
+
 class Category:
     """defines every attributes needed regarding a category"""
 
@@ -5,5 +8,5 @@ class Category:
         """sets default values for the attributes"""
 
         self.name = ""
-        self.id = 0
+        self.c_id = 0
         self.products_nb = 0

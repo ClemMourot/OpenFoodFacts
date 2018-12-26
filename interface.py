@@ -1,6 +1,8 @@
+"""contains the user interface"""
+
 import get_data
 import database_access
-from database_class import *
+import database_class
 
 
 def menu():
@@ -23,15 +25,15 @@ def program():
     """initializes Database object and MySQL connection
     and runs the function needed based on the user's menu choice"""
 
-    database = Database()  # instantiates Database object
+    database = database_class.Database()  # instantiates Database object
 
     get_data.insert_into_database(database, database.connection,
                                   database.cursor)
     # gathers and inserts data into MySQL database
 
-    on = True
+    loop_on = True
 
-    while on:  # until the user chooses to exit the program
+    while loop_on:  # until the user chooses to exit the program
 
         try:
 
@@ -39,7 +41,7 @@ def program():
 
             if choice <= 0 or choice > 3:
 
-                pass
+                print("Choix invalide")
 
         except ValueError:
 
@@ -61,7 +63,7 @@ def program():
 
         if choice == 3:  # user chose to quit the program
 
-            on = False
+            loop_on = False
 
     database.connection.close()
 
